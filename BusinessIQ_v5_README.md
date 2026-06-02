@@ -1,4 +1,4 @@
-# BusinessIQ v5 – AI-Powered Business Analytics Assistant
+# BusinessIQ  – AI-Powered Business Analytics Assistant
 
 ## Overview
 

@@ -1,0 +1,228 @@
+{
+  "name": "BusinessIQ  using telegram",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -688,
+        -192
+      ],
+      "id": "39c7a2d4-fac3-405f-a44f-b8567f7d47cc",
+      "name": "Telegram Trigger",
+      "webhookId": "d664cc46-f2cb-4318-8d7d-0c0752776395",
+      "credentials": {
+        "telegramApi": {
+          "id": "k3CPwebrSMBKg2Om",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Telegram Trigger').item.json.message.text }}\n\nYou are BusinessIQ CEO Assistant.\n\nCurrent Date:\n{{ $now.toFormat('yyyy-MM-dd') }}\n\nBusiness Analytics:\n\nTotal Revenue: {{ $json.totalRevenue }}\nTotal Quantity Sold: {{ $json.totalQuantity }}\n\nTop Selling Product: {{ $json.topProduct }}\nTop Selling Product Quantity: {{ $json.topProductQty }}\n\nHighest Revenue Product: {{ $json.topRevenueProduct }}\nHighest Revenue Product Revenue: {{ $json.topRevenueProductRevenue }}\n\nBest Cashier: {{ $json.bestCashier }}\nBest Cashier Revenue: {{ $json.bestCashierRevenue }}\n\nTop City: {{ $json.topCity }}\nTop City Revenue: {{ $json.topCityRevenue }}\n\nTop Category: {{ $json.topCategory }}\nTop Category Revenue: {{ $json.topCategoryRevenue }}\n\nBest Month: {{ $json.bestMonth }}\nBest Month Revenue: {{ $json.bestMonthRevenue }}\n\nTop 5 Products:\n{{ JSON.stringify($json.top5Products) }}\n\nCategory Revenue:\n{{ JSON.stringify($json.categoryRevenue) }}\n\nMonthly Revenue:\n{{ JSON.stringify($json.monthlyRevenue) }}\n\nBusiness Recommendations:\n{{ JSON.stringify($json.recommendations) }}\n\nRules:\n\n1. Never ask for access to data.\n2. Never ask permission to analyze.\n3. Data is already available.\n4. Answer directly.\n5. Use business language.\n6. When asked for summary, provide executive summary.\n7. When asked what should be improved, use recommendations.\n8. Keep answers concise.\n9. Use numbers wherever possible.\n10. Act like a CEO advisor, not a chatbot.\n",
+        "options": {
+          "systemMessage": "=You are BusinessIQ Assistant.\n\nCurrent Date:\n{{ $now.toFormat('yyyy-MM-dd') }}\n\nBusiness Analytics Data:\n\nTotal Revenue:\n{{ $json.totalRevenue }}\n\nTotal Quantity Sold:\n{{ $json.totalQuantity }}\n\nTop Selling Product:\n{{ $json.topProduct }}\n\nTop Product Quantity:\n{{ $json.topProductQty }}\n\nHighest Revenue Product:\n{{ $json.topRevenueProduct }}\n\nBest Cashier:\n{{ $json.bestCashier }}\n\nBest Cashier Revenue:\n{{ $json.bestCashierRevenue }}\n\nTop City:\n{{ $json.topCity }}\n\nTop City Revenue:\n{{ $json.topCityRevenue }}\n\nBest Category:\n{{ $json.topCategory }}\n\nBest Category Revenue:\n{{ $json.topCategoryRevenue }}\n\nBest Month:\n{{ $json.bestMonth }}\n\nBest Month Revenue:\n{{ $json.bestMonthRevenue }}\n\nTop 5 Products:\n{{ JSON.stringify($json.top5Products) }}\n\nCategory Revenue:\n{{ JSON.stringify($json.categoryRevenue) }}\n\nMonthly Revenue:\n{{ JSON.stringify($json.monthlyRevenue) }}\n\nAlways answer using the data provided.\n\nNever ask for permission to access data.\nNever say \"I need access to data\".\nThe data is already available.\n\nBe concise and professional."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        272,
+        -192
+      ],
+      "id": "8dc2f0f0-6d03-45bf-9142-95cd4a24a788",
+      "name": "AI Agent",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        192
+      ],
+      "id": "b4f2032f-4de4-4651-8cd6-88f7cf84c83c",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "o8ERGq3NObtSB3ji",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "7927272982",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        720,
+        -192
+      ],
+      "id": "f8bbf2cb-6ecc-4c75-9d61-f1903aacfd6c",
+      "name": "Send a text message",
+      "webhookId": "352cf195-6c53-422d-a59b-722f3f34e1c3",
+      "credentials": {
+        "telegramApi": {
+          "id": "k3CPwebrSMBKg2Om",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "OUR_GOOGLE_SHEET_ID",
+          "mode": "list",
+          "cachedResultName": " BusinessIQ_Sample_Sales_Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1hcZLvMG5BX3WmDm-EIjyG34J4F3_OmKZPUndAZH_mGQ/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1hcZLvMG5BX3WmDm-EIjyG34J4F3_OmKZPUndAZH_mGQ/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -480,
+        -192
+      ],
+      "id": "874396a2-95ea-4917-817d-c567aa6d0c0e",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "G4bHNm8VEIYE0dZp",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const rows = $input.all();\n\nlet totalRevenue = 0;\nlet totalQuantity = 0;\n\nconst productQty = {};\nconst productRevenue = {};\nconst cashierRevenue = {};\nconst cityRevenue = {};\nconst categoryRevenue = {};\nconst monthlyRevenue = {};\n\nfor (const item of rows) {\n\n  const row = item.json;\n\n  const revenue = Number(row.Revenue || 0);\n  const qty = Number(row.Quantity || 0);\n\n  totalRevenue += revenue;\n  totalQuantity += qty;\n\n  // Product Qty\n  productQty[row.Product] =\n    (productQty[row.Product] || 0) + qty;\n\n  // Product Revenue\n  productRevenue[row.Product] =\n    (productRevenue[row.Product] || 0) + revenue;\n\n  // Cashier Revenue\n  cashierRevenue[row.Cashier] =\n    (cashierRevenue[row.Cashier] || 0) + revenue;\n\n  // City Revenue\n  cityRevenue[row.City] =\n    (cityRevenue[row.City] || 0) + revenue;\n\n  // Category Revenue\n  categoryRevenue[row.Category] =\n    (categoryRevenue[row.Category] || 0) + revenue;\n\n  // Monthly Revenue\n  const month = String(row.Date).substring(0,7);\n\n  monthlyRevenue[month] =\n    (monthlyRevenue[month] || 0) + revenue;\n}\n\n\n// Top Product By Quantity\nconst topProduct =\n  Object.entries(productQty)\n    .sort((a,b)=>b[1]-a[1])[0];\n\n\n// Highest Revenue Product\nconst topRevenueProduct =\n  Object.entries(productRevenue)\n    .sort((a,b)=>b[1]-a[1])[0];\n\n\n// Best Cashier\nconst bestCashier =\n  Object.entries(cashierRevenue)\n    .sort((a,b)=>b[1]-a[1])[0];\n\n\n// Best City\nconst topCity =\n  Object.entries(cityRevenue)\n    .sort((a,b)=>b[1]-a[1])[0];\n\n\n// Best Category\nconst topCategory =\n  Object.entries(categoryRevenue)\n    .sort((a,b)=>b[1]-a[1])[0];\n\n\n// Best Month\nconst bestMonth =\n  Object.entries(monthlyRevenue)\n    .sort((a,b)=>b[1]-a[1])[0];\n\n\n// Top 5 Products\nconst top5Products =\n  Object.entries(productQty)\n    .sort((a,b)=>b[1]-a[1])\n    .slice(0,5)\n    .map(([product, qty]) => ({\n      product,\n      qty\n    }));\n\n\nreturn [\n{\njson:{\n\ntotalRevenue,\ntotalQuantity,\n\ntopProduct: topProduct[0],\ntopProductQty: topProduct[1],\n\ntopRevenueProduct: topRevenueProduct[0],\ntopRevenueProductRevenue: topRevenueProduct[1],\n\nbestCashier: bestCashier[0],\nbestCashierRevenue: bestCashier[1],\n\ntopCity: topCity[0],\ntopCityRevenue: topCity[1],\n\ntopCategory: topCategory[0],\ntopCategoryRevenue: topCategory[1],\n\nbestMonth: bestMonth[0],\nbestMonthRevenue: bestMonth[1],\n\ntop5Products,\n\ncategoryRevenue,\n\nmonthlyRevenue\n\n}\n}\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -272,
+        -192
+      ],
+      "id": "12256ca6-0817-4ae8-8216-57c4e8b08846",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $json;\n\nconst recommendations = [];\n\n// Revenue trend\nif (\n  data.bestMonthRevenue &&\n  data.totalRevenue\n) {\n  recommendations.push(\n    `Best performing month is ${data.bestMonth}.`\n  );\n}\n\n// Top product\nrecommendations.push(\n  `Maintain strong inventory levels for ${data.topProduct}.`\n);\n\n// Top city\nrecommendations.push(\n  `${data.topCity} is currently the strongest market.`\n);\n\n// Best cashier\nrecommendations.push(\n  `${data.bestCashier} is the top-performing cashier.`\n);\n\n// Category\nrecommendations.push(\n  `Focus promotions on the ${data.topCategory} category.`\n);\n\nreturn [{\n  json: {\n    ...data,\n    recommendations\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -64,
+        -192
+      ],
+      "id": "711c467e-25bd-4258-b4b7-73680cf2e5df",
+      "name": "Recommendation Engine"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Recommendation Engine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recommendation Engine": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "3e51044b-ebd3-492d-8699-7086dd7164ce",
+  "meta": {
+    "instanceId": "cef912883707e3f95a45e281a86bd91bc56b0c251e5d5f0ea112d03a564debfe"
+  },
+  "id": "qOe5MTchDZyO1weP",
+  "tags": []
+}
